@@ -1,0 +1,17 @@
+# Set all files to have LF line endings
+* text eol=lf
+*.png binary
+*.jpg binary
+*.flac binary
+*.m4a binary
+*.wav binary
+*.ogg binary
+*.ttf binary
+*.gz binary
+*.xz binary
+*.zip binary
+*.7z binary
+*.rar binary
+*.tar binary
+*.tgz binary
+*.txz binary

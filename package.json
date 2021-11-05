@@ -1,0 +1,33 @@
+{
+  "name": "@pineapplemachine/describe",
+  "version": "1.0.0",
+  "description": "Brief string descriptions of arbitrary values.",
+  "keywords": [
+    "string",
+    "tostring"
+  ],
+  "homepage": "https://github.com/pineapplemachine/describe-js",
+  "license": "MIT",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "files": [
+    "readme.md",
+    "changelog.md",
+    "LICENSE",
+    "package.json",
+    "src/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pineapplemachine/describe-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pineapplemachine/describe-js/issues"
+  },
+  "scripts": {
+    "test": "node test/index.js",
+    "prepublish": "npm test"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
