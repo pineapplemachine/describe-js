@@ -9,6 +9,10 @@ function assertDescription(expected, value, desc) {
         const actual = (desc || describe)(value);
         if(actual === expected) {
             console.log("OK:", actual);
+            if(actual.length > 60) {
+                console.log("ERROR: Description exceeds 60 characters.");
+                assertDescriptionErrorsCount++;
+            }
         }
         else {
             console.error("ERROR!");
@@ -31,6 +35,12 @@ class TestClass {
 }
 
 class TestDescriptorClass {
+    constructor(n) {
+        this.n = n;
+    }
+}
+
+class VeryLongClassNameToVerifyTruncationBehavior {
     constructor(n) {
         this.n = n;
     }
@@ -67,6 +77,7 @@ assertDescription("the string \"hello, world!\"", "hello, world!");
 assertDescription("the string \"\\\\\"", "\\");
 assertDescription("the string \"\\r\\n\"", "\r\n");
 assertDescription("the string \"\\u0000\\u0001\"", "\x00\x01");
+assertDescription("a string", "\x01\x02\x01\x02\x01\x02\x01\x02\x01\x02\x01\x02");
 assertDescription("a string", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 assertDescription("Symbol.iterator", Symbol.iterator);
 assertDescription("Symbol.toPrimitive", Symbol.toPrimitive);
@@ -87,10 +98,16 @@ assertDescription("an anonymous function", function(n) {return n + n;});
 assertDescription("an anonymous function", (n) => {return n * n;});
 assertDescription("the function \"describe\"", describe);
 assertDescription("the function \"myFunction\"", function myFunction(n) {return -n;});
+assertDescription("the function \"VeryLongFunctionNameToVerifyTruncat...\"",
+    function VeryLongFunctionNameToVerifyTruncationBehavior(n) {return;}
+);
 assertDescription("an empty object", {});
 assertDescription("a plain object with 1 key", {a: 1});
 assertDescription("a plain object with 4 keys", {a: 1, b: 2, c: 3, d: 4});
 assertDescription("an object instance of \"TestClass\"", new TestClass(100));
+assertDescription("an object instance of \"VeryLongClassNameToVerifyTrunca...\"",
+    new VeryLongClassNameToVerifyTruncationBehavior(5)
+);
 assertDescription("an iterable object", new (function () {this[Symbol.iterator] = () => {};}));
 assertDescription("an object", new (function () {this.n = 0}));
 assertDescription("TestDescriptorClass #0", new TestDescriptorClass(0));

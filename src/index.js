@@ -8,6 +8,29 @@ class Describe {
     }
     
     /**
+     * Internal helper for generating a safe representation of
+     * an arbitrary string value. Special characters (including
+     * newlines and escape characters) will be escaped and
+     * long strings will be truncated.
+     */
+    safeString(length, value) {
+        let i = length - 2;
+        let j = 4;
+        while(i >= 4) {
+            const trunc = (value.length <= i ?
+                value : value.slice(0, i - 3) + "..."
+            );
+            const escaped = JSON.stringify(trunc);
+            if(escaped.length <= length) {
+                return escaped;
+            }
+            i -= j;
+            j += 2;
+        }
+        return "";
+    }
+    
+    /**
      * Add a custom descriptor function to be used by `describe`.
      *
      * @param descriptor A function accepting an arbitrary value
@@ -96,7 +119,7 @@ class Describe {
             }
         }
         else if(typeof(value) === "symbol") {
-            return String(value.description);
+            return String(value.description.slice(0, 60));
         }
         else if(Array.isArray(value)) {
             if(!value.length) {
@@ -148,8 +171,11 @@ class Describe {
         else if(typeof(value) === "object") {
             if(value.constructor && value.constructor !== Object) {
                 if(value.constructor.name) {
-                    const ctorName = JSON.stringify(value.constructor.name);
-                    return "an object instance of " + ctorName;
+                    const ctorName = this.safeString(36, value.constructor.name);
+                    return (ctorName ?
+                        "an object instance of " + ctorName :
+                        "an object instance"
+                    );
                 }
                 else if(typeof(Symbol) !== "undefined" &&
                     typeof(value[Symbol.iterator]) === "function"
@@ -181,14 +207,22 @@ class Describe {
         }
         else if(typeof(value) === "function") {
             if(value.name) {
-                return "the function " + JSON.stringify(value.name);
+                const funcName = this.safeString(40, value.name);
+                return (funcName ?
+                    "the function " + funcName :
+                    "a function"
+                );
             }
             else {
                 return "an anonymous function";
             }
         }
         else {
-            return "a value with type " + JSON.stringify(value);
+            const typeName = this.safeString(32, typeof(value));
+            return (typeName ?
+                "a value with type " + typeName :
+                "a value with an unrecognized type"
+            );
         }
     }
 }

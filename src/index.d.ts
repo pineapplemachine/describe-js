@@ -2,6 +2,7 @@ export type Descriptor = ((value: any) => string);
 export class Describe {
     descriptors: Descriptor[];
     constructor(descriptors?: Descriptor[] | undefined);
+    safeString(length: number, value: string): string;
     addDescriptor(descriptor: Descriptor): void;
     describe(value: any): string;
 }

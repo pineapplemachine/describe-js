@@ -1,6 +1,6 @@
 {
   "name": "@pineapplemachine/describe",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Brief string descriptions of arbitrary values.",
   "keywords": [
     "string",
