@@ -1,3 +1,9 @@
+# v1.1.0
+
+2021-11-07. Third release.
+
++ Fix package name. (Oops.)
+
 # v1.0.1
 
 2021-11-06. Second release.

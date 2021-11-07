@@ -1,4 +1,4 @@
-# @pineapplemachine/describe
+# @pinemach/describe
 
 This is a small, simple, permissively-licensed and zero-dependency library for getting a brief string description of an arbitrary JavaScript value.
 
@@ -6,10 +6,10 @@ The default built-in description logic guarantees that strings will not be longe
 
 ## Installation
 
-You can add `@pineapplemachine/describe` to your JavaScript project via NPM:
+You can add `@pinemach/describe` to your JavaScript project via NPM:
 
 ```
-npm install --save @pineapplemachine/describe
+npm install --save @pinemach/describe
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ The simplest usage of this package is to import the default `describe` function 
 **Basic usage:**
 
 ``` js
-const {describe} = require("@pineapplemachine/describe");
+const {describe} = require("@pinemach/describe");
 
 console.log(describe(null)); // Prints "null"
 console.log(describe(1234.5)); // Prints "the number 1234.5"
@@ -32,7 +32,7 @@ The package also supports overriding description behavior via the `addDescriptor
 **Intermediate usage, featuring custom value descriptors:**
 
 ``` js
-const {describe, addDescriptor} = require("@pineapplemachine/describe");
+const {describe, addDescriptor} = require("@pinemach/describe");
 
 // A custom class that we will want a custom description for
 class MyClass {
@@ -63,7 +63,7 @@ The package also provides a `Describe` class for instanced behavior. This means 
 **Advanced usage, featuring custom value descriptors and instanced Describe logic:**
 
 ``` js
-const {Describe, describe} = require("@pineapplemachine/describe");
+const {Describe, describe} = require("@pinemach/describe");
 
 // A custom class that we will want a custom description for
 class MyClass {
