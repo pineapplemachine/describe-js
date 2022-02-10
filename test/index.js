@@ -46,6 +46,52 @@ class VeryLongClassNameToVerifyTruncationBehavior {
     }
 }
 
+class BadArray extends Array {
+    get length() {throw new Error("!");}
+    get [Symbol.iterator]() {throw new Error("!");}
+}
+
+class BadSet extends Set {
+    get size() {throw new Error("!");}
+    get [Symbol.iterator]() {throw new Error("!");}
+}
+
+class BadMap extends Map {
+    get size() {throw new Error("!");}
+    get [Symbol.iterator]() {throw new Error("!");}
+}
+
+const badProperty = {get: () => {throw new Error("!");}};
+
+const badArrayInstance = [0, 1, 2, 3];
+try {Object.defineProperty(badArrayInstance, "length", badProperty);} catch {}
+Object.defineProperty(badArrayInstance, "constructor", badProperty);
+Object.defineProperty(badArrayInstance, Symbol.iterator, badProperty);
+
+const badSetInstance = new Set();
+Object.defineProperty(badSetInstance, "size", badProperty);
+Object.defineProperty(badSetInstance, "constructor", badProperty);
+Object.defineProperty(badSetInstance, Symbol.iterator, badProperty);
+
+const badMapInstance = new Map();
+Object.defineProperty(badMapInstance, "size", badProperty);
+Object.defineProperty(badMapInstance, "constructor", badProperty);
+Object.defineProperty(badMapInstance, Symbol.iterator, badProperty);
+
+const badBufferInstance = Buffer.from([0, 1, 2, 3]);
+Object.defineProperty(badBufferInstance, "length", badProperty);
+Object.defineProperty(badBufferInstance, "constructor", badProperty);
+Object.defineProperty(badBufferInstance, Symbol.iterator, badProperty);
+
+const badObjectConstructor = {};
+Object.defineProperty(badObjectConstructor, "constructor", badProperty);
+
+const badObjectPrototype = {};
+Object.defineProperty(badObjectConstructor, "prototype", badProperty);
+
+const badObjectIterable = {x: 1};
+Object.defineProperty(badObjectIterable, Symbol.iterator, badProperty);
+
 addDescriptor((value) => {
     if(value instanceof TestDescriptorClass) {
         return "TestDescriptorClass #" + String(value.n);
@@ -116,6 +162,16 @@ assertDescription("an object instance of \"TestDescriptorClass\"",
     new TestDescriptorClass(1),
     (v) => new Describe().describe(v)
 );
+assertDescription("an array", new BadArray());
+assertDescription("an array with 4 elements", badArrayInstance);
+assertDescription("a set", new BadSet());
+assertDescription("a set", badSetInstance);
+assertDescription("a map", new BadMap());
+assertDescription("a map", badMapInstance);
+assertDescription("a buffer", badBufferInstance);
+assertDescription("an empty object", badObjectConstructor);
+assertDescription("an empty object", badObjectPrototype);
+assertDescription("a plain object with 1 key", badObjectIterable);
 
 if(!assertDescriptionErrorsCount) {
     const total = assertDescriptionTotalCount;
