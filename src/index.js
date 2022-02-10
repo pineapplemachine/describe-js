@@ -13,7 +13,7 @@ class Describe {
      * newlines and escape characters) will be escaped and
      * long strings will be truncated.
      */
-    safeString(length, value) {
+    getSafeString(length, value) {
         let i = length - 2;
         let j = 4;
         while(i >= 4) {
@@ -28,6 +28,35 @@ class Describe {
             j += 2;
         }
         return "";
+    }
+    
+    /**
+     * Internal helper for safely getting the class name string
+     * of an arbitrary object.
+     */
+    getClassName(value) {
+        if(!value || typeof(value) !== "object") {
+            return undefined;
+        }
+        const prototype = Object.getPrototypeOf(value);
+        if(!prototype) {
+            return null;
+        }
+        const constructor = Object.getOwnPropertyDescriptor(
+            prototype, "constructor"
+        );
+        if(!constructor || typeof(constructor.value) !== "function") {
+            return undefined;
+        }
+        const name = Object.getOwnPropertyDescriptor(
+            constructor.value, "name"
+        );
+        if(name && typeof(name.value) === "string") {
+            return name.value;
+        }
+        else {
+            return undefined;
+        }
     }
     
     /**
@@ -122,7 +151,13 @@ class Describe {
             return String(value.description.slice(0, 60));
         }
         else if(Array.isArray(value)) {
-            if(!value.length) {
+            const length = Object.getOwnPropertyDescriptor(value, "length");
+            if(Object.getPrototypeOf(value) !== Array.prototype || !length || (
+                 length.get !== Object.getOwnPropertyDescriptor([], "length").get
+            )) {
+                return "an array";
+            }
+            else if(!value.length) {
                 return "an empty array";
             }
             else if(value.length === 1) {
@@ -133,7 +168,12 @@ class Describe {
             }
         }
         else if(typeof(Set) !== "undefined" && value instanceof Set) {
-            if(!value.size) {
+            if(Object.getPrototypeOf(value) !== Set.prototype ||
+                Object.getOwnPropertyDescriptor(value, "size")
+            ) {
+                return "a set";
+            }
+            else if(!value.size) {
                 return "an empty set";
             }
             else if(value.size === 1) {
@@ -144,7 +184,12 @@ class Describe {
             }
         }
         else if(typeof(Map) !== "undefined" && value instanceof Map) {
-            if(!value.size) {
+            if(Object.getPrototypeOf(value) !== Map.prototype ||
+                Object.getOwnPropertyDescriptor(value, "size")
+            ) {
+                return "a map";
+            }
+            else if(!value.size) {
                 return "an empty map";
             }
             else if(value.size === 1) {
@@ -155,7 +200,12 @@ class Describe {
             }
         }
         else if(typeof(Buffer) !== "undefined" && value instanceof Buffer) {
-            if(!value.length) {
+            if(Object.getPrototypeOf(value) !== Buffer.prototype ||
+                Object.getOwnPropertyDescriptor(value, "length")
+            ) {
+                return "a buffer";
+            }
+            else if(!value.length) {
                 return "an empty buffer";
             }
             else if(value.length === 1) {
@@ -168,25 +218,9 @@ class Describe {
         else if(typeof(Promise) !== "undefined" && value instanceof Promise) {
             return "a promise";
         }
-        else if(typeof(value) === "object") {
-            if(value.constructor && value.constructor !== Object) {
-                if(value.constructor.name) {
-                    const ctorName = this.safeString(36, value.constructor.name);
-                    return (ctorName ?
-                        "an object instance of " + ctorName :
-                        "an object instance"
-                    );
-                }
-                else if(typeof(Symbol) !== "undefined" &&
-                    typeof(value[Symbol.iterator]) === "function"
-                ) {
-                    return "an iterable object";
-                }
-                else {
-                    return "an object";
-                }
-            }
-            else {
+        else if(typeof(value) === "object" && value) {
+            const prototype = Object.getPrototypeOf(value);
+            if(prototype === Object.prototype) {
                 let count = 0;
                 for(const key in value) {
                     count += (
@@ -204,10 +238,28 @@ class Describe {
                     return "a plain object with " + String(count) + " keys";
                 }
             }
+            else {
+                const className = this.getClassName(value);
+                if(className) {
+                    const safeName = this.getSafeString(36, className);
+                    return (safeName ?
+                        "an object instance of " + safeName :
+                        "an object instance"
+                    );
+                }
+                else if(typeof(Symbol) !== "undefined" &&
+                    Symbol.iterator in value
+                ) {
+                    return "an iterable object";
+                }
+                else {
+                    return "an object";
+                }
+            }
         }
         else if(typeof(value) === "function") {
             if(value.name) {
-                const funcName = this.safeString(40, value.name);
+                const funcName = this.getSafeString(40, value.name);
                 return (funcName ?
                     "the function " + funcName :
                     "a function"
@@ -218,7 +270,7 @@ class Describe {
             }
         }
         else {
-            const typeName = this.safeString(32, typeof(value));
+            const typeName = this.getSafeString(32, typeof(value));
             return (typeName ?
                 "a value with type " + typeName :
                 "a value with an unrecognized type"
