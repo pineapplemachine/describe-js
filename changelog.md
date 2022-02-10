@@ -1,3 +1,10 @@
+# v1.2.0
+
+2022-02-10. Fourth release.
+
++ Improve behavior for unusual objects, e.g. a Set with its "size" property overridden.
++ Rename method Describe.safeString to Describe.getSafeString.
+
 # v1.1.0
 
 2021-11-07. Third release.

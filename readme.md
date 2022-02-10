@@ -1,8 +1,8 @@
 # @pinemach/describe
 
-This is a small, simple, permissively-licensed and zero-dependency library for getting a brief string description of an arbitrary JavaScript value.
+This is a small, simple, permissively-licensed and zero-dependency library for getting a brief string description of arbitrary JavaScript values.
 
-The default built-in description logic guarantees that strings will not be longer than 60 characters and will not contain newlines or control characters. This makes the package particularly suitable for generating human-readable descriptions of untrusted data that is safe to output to a log.
+The default built-in description logic guarantees that strings will not be longer than 60 characters and will not contain newlines or control characters. This makes the package particularly suitable for generating human-readable descriptions of untrusted data, that is safe to output to a log.
 
 ## Installation
 
@@ -27,7 +27,7 @@ console.log(describe({})); // Prints "an empty object"
 console.log(describe([0, 1, 2, 3])); // Prints "an array with 4 elements"
 ```
 
-The package also supports overriding description behavior via the `addDescriptor` function. Descriptor functions take precedence over default built-in logic, and descriptors added first take precedence over descriptors added last. When a descriptor function returns a non-empty string for an input value, that string will be produced by the `describe` function instead of its default output. When a descriptor function returns any falsey value, evaluation continues to remaining descriptor functions and then to the default description logic.
+The package also supports overriding description behavior via the `addDescriptor` function. Descriptor functions take precedence over default built-in logic, and descriptors added first take precedence over descriptors added last. When a descriptor function returns a non-empty string for an input value, that string will be produced by the `describe` function instead of its default output. When a descriptor function returns any falsey value, evaluation continues for remaining descriptor functions and then to the default description logic.
 
 **Intermediate usage, featuring custom value descriptors:**
 
